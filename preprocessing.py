@@ -15,9 +15,6 @@ https://www.kaggle.com/crowdflower/twitter-airline-sentiment
 # %%
 import pandas as pd
 
-RAW_PATH = "./data/tweets.csv"
-CLEAN_PATH = "./data/clean_tweets.csv"
-
 class AutoMLwrangler:
     def __init__(self) -> None:
         self.raw_data = None
@@ -65,23 +62,20 @@ class AutoMLwrangler:
             #TODO: if set is true, merge the set_col series with the clean_data
             pass
 
-    def clean_columns(self, labels=None, values=None) -> int:
+    def clean_columns(self, mapping=None) -> int:
         """
-        Removes rows containing:
-            - Unicode characters in labels. 
-            - spaces and non-alphanumeric characters in labels.
-            - Empty lines.
+        Removes rows which dont have valid labels.
         If labels and values are provided, any factor labels will be replaced
         with a numerical value provided in values
         
         Returns:
             (int): Length of clean_data after removing rows
         """
-        if labels is not None and values is not None:
-            pass
-        elif labels is not None or values is not None:
-            pass
+        if mapping is not None:
+            assert type(mapping) == dict
+            self.clean_data.replace({"category": mapping}, inplace=True)
         self.clean_data.dropna(inplace=True)
+        #TODO: drop row if label is not numerical
         return self.clean_data.shape[0]
 
     def export_data(self, *args, **kwargs) -> None:
@@ -95,11 +89,17 @@ class AutoMLwrangler:
         self.clean_data.to_csv(*args, **kwargs, index=False, header=False)
 
 if __name__ == "__main__":
+    RAW_PATH = "./data/tweets.csv"
+    CLEAN_PATH = "./data/clean_tweets.csv"
+    MAPPING = {
+        'negative': 0, 
+        'neutral': 1, 
+        'positive': 2
+    }
     wrangler = AutoMLwrangler()
     wrangler.import_data(RAW_PATH)
     wrangler.set_columns("text", "airline_sentiment")
-    print(len(wrangler.clean_data.index))
-    print(wrangler.clean_columns())
+    wrangler.clean_columns(mapping=MAPPING)
     wrangler.export_data(CLEAN_PATH)
 
 # %%
