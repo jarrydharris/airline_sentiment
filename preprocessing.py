@@ -56,7 +56,6 @@ class AutoMLwrangler:
 
         Returns:
             None
-
         """
         if set is False:
             self.clean_data = self.raw_data[[content, category]]
@@ -64,15 +63,32 @@ class AutoMLwrangler:
             #TODO: if set is true, merge the set_col series with the clean_data
             pass
 
-    def clean_columns(self):
-        pass
+    def clean_columns(self) -> int:
+        """
+        Removes rows containing:
+            - Unicode characters in labels. 
+            - spaces and non-alphanumeric characters in labels.
+            - Empty lines.
+        
+        Returns:
+            (int): Length of clean_data after removing rows
+        """
+        return self.clean_data.shape[0]
 
-    def export_data(self, path):
-        pass
+    def export_data(self, *args, **kwargs) -> None:
+        """ 
+        A wrapper for pandas to_csv, provide a path to a csv and it will
+        store the clean data without headers or an index
+
+        Args: 
+            All args/kwargs to_csv takes
+        """
+        self.clean_data.to_csv(*args, **kwargs, index=False, header=False)
 
 wrangler = AutoMLwrangler()
 print(wrangler.import_data(RAW_PATH))
 wrangler.set_columns("text", "airline_sentiment")
+wrangler.export_data(CLEAN_PATH)
 
 # %%
 
