@@ -58,21 +58,30 @@ class AutoMLwrangler:
             None
         """
         if set is False:
-            self.clean_data = self.raw_data[[content, category]]
+            self.clean_data = self.raw_data[[content, category]].copy()
+            self.clean_data.rename(columns={content:"content", 
+                category:"category"}, inplace=True)
         else:
             #TODO: if set is true, merge the set_col series with the clean_data
             pass
 
-    def clean_columns(self) -> int:
+    def clean_columns(self, labels=None, values=None) -> int:
         """
         Removes rows containing:
             - Unicode characters in labels. 
             - spaces and non-alphanumeric characters in labels.
             - Empty lines.
+        If labels and values are provided, any factor labels will be replaced
+        with a numerical value provided in values
         
         Returns:
             (int): Length of clean_data after removing rows
         """
+        if labels is not None and values is not None:
+            pass
+        elif labels is not None or values is not None:
+            pass
+        self.clean_data.dropna(inplace=True)
         return self.clean_data.shape[0]
 
     def export_data(self, *args, **kwargs) -> None:
@@ -85,10 +94,13 @@ class AutoMLwrangler:
         """
         self.clean_data.to_csv(*args, **kwargs, index=False, header=False)
 
-wrangler = AutoMLwrangler()
-print(wrangler.import_data(RAW_PATH))
-wrangler.set_columns("text", "airline_sentiment")
-wrangler.export_data(CLEAN_PATH)
+if __name__ == "__main__":
+    wrangler = AutoMLwrangler()
+    wrangler.import_data(RAW_PATH)
+    wrangler.set_columns("text", "airline_sentiment")
+    print(len(wrangler.clean_data.index))
+    print(wrangler.clean_columns())
+    wrangler.export_data(CLEAN_PATH)
 
 # %%
 
