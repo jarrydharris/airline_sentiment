@@ -12,7 +12,7 @@ If this optional column is not included autoML will split it into 80% 10% 10%
 Data source for this project:
 https://www.kaggle.com/crowdflower/twitter-airline-sentiment
 """
-# %%
+
 import pandas as pd
 
 class AutoMLwrangler:
@@ -76,6 +76,7 @@ class AutoMLwrangler:
             self.clean_data.replace({"category": mapping}, inplace=True)
         self.clean_data.dropna(inplace=True)
         #TODO: drop row if label is not numerical
+        #TODO: Remove duplicates
         return self.clean_data.shape[0]
 
     def export_data(self, *args, **kwargs) -> None:
@@ -101,6 +102,3 @@ if __name__ == "__main__":
     wrangler.set_columns("text", "airline_sentiment")
     wrangler.clean_columns(mapping=MAPPING)
     wrangler.export_data(CLEAN_PATH)
-
-# %%
-
