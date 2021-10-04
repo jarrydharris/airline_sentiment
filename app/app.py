@@ -1,10 +1,16 @@
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash import dcc
+from dash import html
+from dash.dependencies import Input, Output, State
+from google.api_core.client_options import ClientOptions
+from google.cloud import automl_v1
+
+MODEL_PATH = "./model.txt"
+
+with open(MODEL_PATH, "r") as f:
+    model_name = f.read()
 
 app = dash.Dash(__name__)
-
 
 app.layout = html.Div(children=[
     html.H1(children='Tweet sentiment analysis.'),
@@ -20,7 +26,7 @@ app.layout = html.Div(children=[
         "Input: ",
         dcc.Textarea(id='my-input', 
             value='Enter a tweet here and click submit.', 
-            style={'width': '100%', 'height': 300})
+            style={'width': '100%', 'height': 150})
     ]),
     html.Button('Submit', id='submission'),
     html.Br(),
@@ -28,12 +34,26 @@ app.layout = html.Div(children=[
     html.Div(id='my-output'),
 ])
 
+def get_prediction(payload, model_name):
+    options = ClientOptions(api_endpoint='automl.googleapis.com')
+    prediction_client = (
+        automl_v1.PredictionServiceClient(client_options=options))
+
+    request = prediction_client.predict(name=model_name, payload=payload)
+
+    return request  # waits until request is returned
+
 @app.callback(
     Output(component_id='my-output', component_property='children'),
-    Input(component_id='submission', component_property='n_clicks')
+    [Input(component_id='submission', component_property='n_clicks')],
+    [State('my-input', 'value')]
 )
-def update_output_div(input_value):
-    return 'Output: {}'.format(input_value)
+def update_output_div(n_clicks, input_value):
+    
+    payload = {'text_snippet': {'content': input_value, 
+        'mime_type': 'text/plain'} }
+    prediction = get_prediction(payload, model_name)
+    return 'Output: {}'.format(prediction)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
