@@ -4,11 +4,15 @@ from dash import html
 from dash.dependencies import Input, Output, State
 from google.api_core.client_options import ClientOptions
 from google.cloud import automl_v1
+import json
 
-MODEL_PATH = "./model.txt"
-
-with open(MODEL_PATH, "r") as f:
-    model_name = f.read()
+project_id = "sentiment-analysis-01"
+model_id = "TST1490117531589935104"
+client = automl_v1.AutoMlClient()
+# Get the full path of the model.
+model_full_id = client.model_path(project_id, "us-central1", model_id)
+model = client.get_model(name=model_full_id)
+model_name = model.name
 
 app = dash.Dash(__name__)
 
@@ -49,11 +53,18 @@ def get_prediction(payload, model_name):
     [State('my-input', 'value')]
 )
 def update_output_div(n_clicks, input_value):
-    
     payload = {'text_snippet': {'content': input_value, 
         'mime_type': 'text/plain'} }
     prediction = get_prediction(payload, model_name)
-    return 'Output: {}'.format(prediction)
+    sent = prediction.payload[0].text_sentiment.sentiment
+    if sent == 0:
+        return 'Output: {}'.format("Negative")
+    elif sent == 1:
+        return 'Output: {}'.format("Neutral")
+    elif sent == 2:
+        return 'Output: {}'.format("Positive")
+    else:
+        return 'Output: {}'.format("Error")
 
 if __name__ == '__main__':
     app.run_server(debug=True)
