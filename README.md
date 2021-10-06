@@ -1,6 +1,6 @@
 # Twitter Sentiment Analysis App
 
-Model trained using airline tweets using googles autoML. App containerized and
+Model trained using airline tweets with googles autoML. App containerized and
 deployed on GCP Cloud Run.
 
 # Demo
