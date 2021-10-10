@@ -5,4 +5,4 @@ deployed on GCP Cloud Run.
 
 # Demo
 
-[Hosted on Cloud Run](https://sent-app-image-d3vttc2zpa-uc.a.run.app/)
+Please click -> [Hosted on Cloud Run](https://sent-app-image-d3vttc2zpa-uc.a.run.app/)
