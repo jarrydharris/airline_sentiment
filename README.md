@@ -5,4 +5,4 @@ deployed on GCP Cloud Run.
 
 # Demo
 
-App disabled to prevent uneccesary billing.
+App disabled to prevent unnecessary billing.
