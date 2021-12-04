@@ -5,4 +5,4 @@ deployed on GCP Cloud Run.
 
 # Demo
 
-Please click -> [Hosted on Cloud Run](https://sent-app-image-d3vttc2zpa-uc.a.run.app/)
+App disabled to prevent uneccesary billing.
